@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='Extension boilerplate for the Morp
 parser.add_argument('name', help='Name of the desired extension (excluding "morpho-")', type=str)
 
 # The language argument is optional, and defaults to morpho
-parser.add_argument('--lang', help='Language of the extension (default: morpho)', default='morpho', type=str)
+parser.add_argument('--lang', help='Language of the extension (default: morpho)', default='morpho', type=str, choices=['morpho', 'c'])
 
 # Parse the arguments
 args = parser.parse_args()
@@ -219,5 +219,28 @@ install(TARGETS {EXT_NAME} LIBRARY DESTINATION lib/)
 with open(f"morpho-{EXT_NAME}/CMakeLists.txt", "w") as root_cmake_file:
     root_cmake_file.write(root_cmake)
 
+# Add a .gitignore file that ignores the build directory
+
+gitignore = f"""
+*.so
+*.dylib
+"""
+
+with open(f"morpho-{EXT_NAME}/.gitignore", "w") as gitignore_file:
+    gitignore_file.write(gitignore)
+
+# Create the lib directory where the .so file will be installed
+Path(f"morpho-{EXT_NAME}/lib").mkdir(parents=True)
+
+# Add a gitignore inside the lib directory to ignore everything in there except the gitignore file itself. This will make the lib directory empty when the extension is cloned.
+
+lib_gitignore = f"""
+*
+!.gitignore
+"""
+
+with open(f"morpho-{EXT_NAME}/lib/.gitignore", "w") as lib_gitignore_file:
+    lib_gitignore_file.write(lib_gitignore)
+    
 # All done!
     
